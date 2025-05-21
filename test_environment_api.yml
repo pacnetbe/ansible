@@ -1,0 +1,31 @@
+# this playbook is using PORTAINER API
+- name: Deploy Test Environment via Portainer API
+  hosts: localhost
+  become: false
+  tasks:
+    - name: Define Portainer API variables
+      set_fact:
+        portainer_url: "http://pi04.lan:9000/api/stacks"
+        portainer_api_key: "ptr_VsBM3cxAcYZIL0OMIdkmvjzCDpFxCunH8e6DUnsgX8M="
+        endpoint_id: 1  # Adjust based on your Portainer setup
+
+    - name: Copy docker-compose.yml to local Ansible project directory
+      copy:
+        src: files/docker-compose-test.yml
+        dest: /home/pacnetadmin/docker-compose-test.yml # if problems, try user "pi"
+        mode: "0644"
+
+    - name: Deploy test environment as a Portainer stack
+      uri:
+        url: "{{https://rpi4-01.dmz:9443}}"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ptr_VsBM3cxAcYZIL0OMIdkmvjzCDpFxCunH8e6DUnsgX8M=}}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          name: "test_environment"
+          type: 2  # 2 = Compose stack
+          endpointId: "{{ 1 }}"
+          file: "{{ lookup('file', 'files/docker-compose-test.yml') }}"
+

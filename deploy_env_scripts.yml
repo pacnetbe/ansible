@@ -1,0 +1,53 @@
+- hosts: all
+  become: true
+  vars:
+    default_env_path: "~/ansible-env"
+    log_file: "/var/log/ansible_env.log"
+  tasks:
+    - name: Set virtual environment path variable dynamically
+      set_fact:
+        env_path: "{{ ansible_env_paths[inventory_hostname] | default(default_env_path) }}"
+
+    - name: Ensure the /opt/scripts directory exists
+      file:
+        path: /opt/scripts
+        state: directory
+        mode: '0755'
+
+    - name: Ensure virtual environment exists
+      file:
+        path: "{{ env_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy start script to /opt/scripts
+      template:
+        src: start_ansible_env.sh.j2
+        dest: /opt/scripts/start_ansible_env.sh
+        mode: '0755'
+        owner: pacnetadmin
+        group: pacnetadmin
+
+    - name: Copy stop script to /opt/scripts
+      template:
+        src: stop_ansible_env.sh.j2
+        dest: /opt/scripts/stop_ansible_env.sh
+        mode: '0755'
+        owner: pacnetadmin
+        group: pacnetadmin
+
+    - name: Ensure alias for StartAnsible exists in .bashrc
+      lineinfile:
+        path: ~/.bashrc
+        line: 'alias StartAnsible="source /opt/scripts/start_ansible_env.sh"'
+        create: yes
+
+    - name: Ensure alias for StopAnsible exists in .bashrc
+      lineinfile:
+        path: ~/.bashrc
+        line: 'alias StopAnsible="source /opt/scripts/stop_ansible_env.sh"'
+        create: yes
+
+    - name: Reload bashrc to activate aliases
+      shell: source ~/.bashrc
+

@@ -1,0 +1,23 @@
+- name: Setup Docker-based test environment on local machine
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install Docker Python module
+      pip:
+        name: docker
+
+    - name: Create local test container (Ubuntu)
+      docker_container:
+        name: test_host_ubuntu
+        image: ubuntu:latest
+        state: started
+        restart_policy: unless-stopped
+        command: "/bin/bash -c 'while true; do sleep 30; done'"
+        ports:
+          - "2222:22"
