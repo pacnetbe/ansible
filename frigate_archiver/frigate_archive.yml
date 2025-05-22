@@ -1,0 +1,53 @@
+---
+- name: Deploy Frigate archival script and systemd timer
+  hosts: "{{ target_hosts | default('all') }}"
+  become: true
+  vars:
+    playbook_path: "/home/pacnetadmin/ansible-project/playbooks/frigate/archive/"
+    archive_script_path: /usr/local/bin/frigate-archive.sh
+    service_unit_path: /etc/systemd/system/frigate-archive.service
+    timer_unit_path: /etc/systemd/system/frigate-archive.timer
+  tasks:
+
+    - name: Create script from template
+      template:
+        src: "{{ playbook_path }}/templates/frigate-archive.sh.j2"
+        dest: "{{ archive_script_path }}"
+        mode: '0755'
+      tags: deploy
+
+    - name: Create systemd service unit
+      template:
+        src: "{{ playbook_path }}/templates/frigate-archive.service.j2"
+        dest: "{{ service_unit_path }}"
+      tags: deploy
+
+    - name: Create systemd timer unit
+      template:
+        src: "{{ playbook_path }}/templates/frigate-archive.timer.j2"
+        dest: "{{ timer_unit_path }}"
+      tags: deploy
+
+    - name: Check if systemd service exists
+      stat:
+        path: "{{ service_unit_path }}"
+      register: stat_service
+      tags: deploy
+
+    - name: Check if systemd timer exists
+      stat:
+        path: "{{ timer_unit_path }}"
+      register: stat_timer
+      tags: deploy
+
+    - name: Reload systemd if service and timer exist
+      command: systemctl daemon-reexec
+      when: stat_service.stat.exists and stat_timer.stat.exists
+      tags: deploy
+
+    - name: Enable and start the archival timer
+      systemd:
+        name: frigate-archive.timer
+        enabled: true
+        state: started
+      tags: activate
