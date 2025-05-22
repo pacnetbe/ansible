@@ -1,0 +1,19 @@
+---
+# tasks/systemd.yml
+- name: Install systemd service unit for archive mover
+  template:
+    src: frigate-archive-move.service.j2
+    dest: /etc/systemd/system/frigate-archive-move.service
+  notify: Reload systemd
+
+- name: Install systemd timer unit for archive mover
+  template:
+    src: frigate-archive-move.timer.j2
+    dest: /etc/systemd/system/frigate-archive-move.timer
+  notify: Reload systemd
+
+- name: Enable and start archive mover timer
+  systemd:
+    name: frigate-archive-move.timer
+    enabled: true
+    state: started

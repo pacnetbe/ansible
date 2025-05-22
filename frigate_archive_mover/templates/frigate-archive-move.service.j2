@@ -1,0 +1,18 @@
+---
+# templates/frigate-archive-move.service.j2
+[Unit]
+Description=Move Frigate archives to NAS
+After=network.target
+
+[Service]
+Type=oneshot
+User={{ frigate_archive_user }}
+Environment="REMOTE_USER={{ frigate_archive_remote_user }}"
+Environment="REMOTE_HOST={{ frigate_archive_remote_host }}"
+Environment="REMOTE_DIR={{ frigate_archive_remote_dir }}"
+Environment="SRC_DIR=/mnt/frigate_archives"
+Environment="TMP_DIR=/tmp/frigate_archive_tmp"
+Environment="LOG_FILE={{ frigate_archive_log_path }}"
+Environment="MAX_RETRIES={{ frigate_archive_max_retries }}"
+Environment="DRY_RUN={{ 'true' if frigate_archive_dry_run else 'false' }}"
+ExecStart={{ frigate_archive_script_path }}

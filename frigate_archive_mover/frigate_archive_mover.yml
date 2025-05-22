@@ -1,0 +1,9 @@
+# playbooks/deploy_frigate_archive_mover.yml
+- name: Deploy Frigate Archive Mover
+  hosts: frigate_hosts
+  become: true
+  vars:
+    frigate_archive_ssh_private_key: "{{ lookup('file', '~/.ssh/frigate_nas_backup_id_rsa') }}"
+    frigate_archive_ssh_known_host: "{{ lookup('pipe', 'ssh-keyscan homenas.lan') }}"
+  roles:
+    - frigate_archive_mover

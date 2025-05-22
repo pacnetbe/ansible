@@ -1,0 +1,25 @@
+---
+# tasks/ssh_key.yml
+- name: Ensure .ssh directory exists
+  file:
+    path: "/home/{{ frigate_archive_user }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ frigate_archive_user }}"
+    group: "{{ frigate_archive_user }}"
+
+- name: Deploy SSH private key
+  copy:
+    content: "{{ frigate_archive_ssh_private_key }}"
+    dest: "/home/{{ frigate_archive_user }}/.ssh/id_rsa"
+    mode: '0600'
+    owner: "{{ frigate_archive_user }}"
+    group: "{{ frigate_archive_user }}"
+  when: frigate_archive_ssh_private_key is defined
+
+- name: Add NAS host to known_hosts
+  known_hosts:
+    name: "{{ frigate_archive_remote_host }}"
+    key: "{{ frigate_archive_ssh_known_host }}"
+    path: "/home/{{ frigate_archive_user }}/.ssh/known_hosts"
+    state: present

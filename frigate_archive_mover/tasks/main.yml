@@ -1,0 +1,20 @@
+---
+# tasks/main.yml
+- name: Include SSH key deployment
+  include_tasks: ssh_key.yml
+
+- name: Include systemd unit deployment
+  include_tasks: systemd.yml
+
+- name: Ensure archive script is executable
+  file:
+    path: "{{ frigate_archive_script_path }}"
+    mode: '0755'
+
+- name: Ensure archive log file exists
+  file:
+    path: "{{ frigate_archive_log_path }}"
+    state: touch
+    owner: "{{ frigate_archive_user }}"
+    group: "{{ frigate_archive_user }}"
+    mode: '0644'

@@ -1,0 +1,12 @@
+---
+# defaults/main.yml
+frigate_archive_user: "frigate"
+frigate_archive_remote_user: "backupuser"
+frigate_archive_remote_host: "homenas.lan"
+frigate_archive_remote_dir: "/mnt/data/frigatearchive"
+frigate_archive_log_path: "/var/log/frigate_archive_move.log"
+frigate_archive_script_path: "/usr/local/bin/move_archives_to_nas.sh"
+frigate_archive_max_retries: 3
+frigate_archive_dry_run: false
+frigate_archive_ssh_private_key: ""
+frigate_archive_ssh_known_host: ""

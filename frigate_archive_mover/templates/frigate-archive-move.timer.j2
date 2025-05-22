@@ -1,0 +1,11 @@
+---
+# templates/frigate-archive-move.timer.j2
+[Unit]
+Description=Run Frigate archive move script daily at 3am
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
