@@ -1,7 +1,0 @@
-[Unit]
-Description=Frigate Archival Script
-After=docker.service
-
-[Service]
-Type=oneshot
-ExecStart={{ archive_script_path }} --days 15
