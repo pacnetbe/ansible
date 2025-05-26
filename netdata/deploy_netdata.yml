@@ -3,7 +3,9 @@ services:
     image: netdata/netdata
     container_name: netdata
     pid: host
-    network_mode: host
+    # network_mode: host
+    networks:
+      - dns
     restart: unless-stopped
     cap_add:
       - SYS_PTRACE
@@ -24,8 +26,16 @@ services:
       - /var/log:/host/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /run/dbus:/run/dbus:ro
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.netdata.rule=Host(`netdata.vserver04.lan`)"
+      - "traefik.http.routers.netdata.entrypoints=web"
+      
 volumes:
   netdataconfig:
   netdatalib:
   netdatacache:
+
+networks:
+  dns:
+    external: true
