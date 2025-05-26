@@ -2,7 +2,7 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
-    hostname: "whoami"
+    hostname: "homepage"
     ports:
       - 3010:3000
     volumes:
@@ -13,15 +13,16 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
+      HOMEPAGE_ALLOWED_HOSTS: <homepage.server.com>
     restart: unless-stopped
     networks:
-      - dns
+      - dns #adapt to match traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.homepage.rule=Host(`homepage.vserver04.lan`)"
+      - "traefik.http.routers.homepage.rule=Host(`<homepage.server.lan>`)" # >> change ulr
       - "traefik.http.routers.homepage.entrypoints=web"
 
 
 networks:
-  dns:
+  dns: # adapt if needed
     external: true
