@@ -1,5 +1,0 @@
-- name: Deploy Frigate archival systemd timer
-  hosts: "{{ target_host | default('pserver2502') }}"
-  become: true
-  roles:
-    - role: frigate_archive
