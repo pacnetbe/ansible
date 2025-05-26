@@ -1,0 +1,27 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    hostname: "whoami"
+    ports:
+      - 3010:3000
+    volumes:
+      - ./config:/app/config # Make sure your local config directory exists
+      #- /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations, see alternative methods
+      - ./images:/app/public/images
+      - ./icons:/app/public/icons
+    environment:
+      PUID: 1000
+      PGID: 1000
+    restart: unless-stopped
+    networks:
+      - dns
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.vserver04.lan`)"
+      - "traefik.http.routers.homepage.entrypoints=web"
+
+
+networks:
+  dns:
+    external: true
