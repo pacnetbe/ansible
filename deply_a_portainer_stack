@@ -1,0 +1,20 @@
+# example of deployment of a stack for portainer
+---
+- hosts: your_target_portainer_hosts  # Replace with your target hosts
+  become: true
+  tasks:
+    - name: Deploy Docker Compose stack
+      docker_stack:
+        name: your_stack_name  # Replace with your stack name
+        compose_file: "/path/to/your/docker-compose.yml"  # Replace with the path to your Compose file
+        namespace: your_namespace  # Optional, if you need a namespace
+        prune: yes  # Optionally remove unused resources after deployment
+        # Add other arguments as needed, refer to Ansible documentation
+        # Example:
+        #  resolve_image: yes
+        #  with_registry_auth: yes
+      register: stack_result
+
+    - name: Print the results
+      debug:
+        msg: "{{ stack_result }}"
