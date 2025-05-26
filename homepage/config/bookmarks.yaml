@@ -1,0 +1,56 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/bookmarks
+
+- Online services:
+    - MyNetatmo:
+        - abbr: NA
+          href: https://my.netatmo.com/app/therm
+    - LWS Panel:
+        - abbr: LWS
+          href: https://panel.lws.fr/
+    - MySonnen:
+        - abbr: SUN
+          href: https://my.sonnen.de/dashboard?lang=en-gb
+    - Telraam:
+        - abbr: TR
+          href: https://telraam.be/
+    - FloorPlanner:
+        - abbr: FP
+          href: https://floorplanner.com/
+    - MagicPlan: 
+        - abbr: MP
+          href: https://magicplan.app
+
+- Developer:
+    - Github:
+        - abbr: GH
+          href: https://github.com/
+    - MX ToolBox:
+        - abbr: MXTB
+          href: https://mxtoolbox.com/
+    - MarkUp.io:
+        - abbr: MU
+          href: https://www.markup.io/
+    - ClickUp:
+        - abbr: CU
+          href: https://clickup.com/
+    - Monday.com:
+        - abbr: MDAY
+          href: https://monday.com
+    - IT-Tools:
+        - abbr: ITT
+          href: http://it-tools.lan/
+    - WireShark:
+        - abbr: WSARK
+          href: http://wireshark.lan/
+
+- Social:
+    - Reddit:
+        - abbr: RE
+          href: https://reddit.com/
+
+- Entertainment:
+    - YouTube:
+        - abbr: YT
+          href: https://youtube.com/
