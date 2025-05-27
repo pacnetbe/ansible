@@ -4,7 +4,7 @@
   become: yes
 
   vars_files:
-    - vars/main.yml
+    - vars/stack.yml
 
   tasks:
     - import_tasks: tasks/stack.yml
