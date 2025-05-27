@@ -7,4 +7,4 @@
     - vars/main.yml
 
   tasks:
-    - import_tasks: tasks/main.yml
+    - import_tasks: tasks/container.yml
