@@ -1,3 +1,7 @@
+# this version uses a variable instead of hardcoding the host
+# ansible-playbook deploy_container.yml -e "target_group=pserver04"
+# or ansible-playbook deploy_container.yml --limit pserver04
+
 ---
 - name: Deploy Beszel & Beszel-Agent
   hosts: "{{ target_group | default('linux_servers') }}"
