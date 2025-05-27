@@ -1,0 +1,39 @@
+after installation / deployment of ansible on a host:
+- use ansible_deploy_ini_script.ymmj
+  # creates the script StartAnsible and StopAnsible
+  # add export ANSIBLE_CONFIG=~/ansible/ansible.cfg to bash / zsh
+
+
+remarks:
+Here's how you can set up the ANSIBLE_CONFIG environment variable permanently
+so that Ansible always finds your central configuration from ~/ansible/ansible.cfg,
+regardless of your current working directory.
+This method avoids having to copy the config file into each playbook directory.
+Setting Up the Permanent Environment Variable
+Edit Your Shell Profile
+  If you use bash, open your ~/.bashrc file:
+    $ nano ~/.bashrc
+  For zsh, open your ~/.zshrc file:
+    $ nano ~/.zshrc
+Add the Environment Variable
+  Append the following line to the file:
+    $ export ANSIBLE_CONFIG=~/ansible/ansible.cfg
+  This tells Ansible to always use the configuration file located at ~/ansible/ansible.cfg no matter where you run your playbooks from.
+
+Apply the Changes
+
+After saving the file, reload your shell configuration to apply the changes:
+For bash:
+  $ source ~/.bashrc
+For zsh:
+  $ source ~/.zshrc
+
+Now your environment variable is set permanently. Every time you open a new terminal, Ansible will pick up the configuration file you specified.
+
+Verification
+  To confirm the variable is set, run:
+    $ echo $ANSIBLE_CONFIG
+  This should output the path ~/ansible/ansible.cfg.
+
+By using this setup, you can run your playbooks from any subdirectory of your Ansible project without worrying about missing configuration files.
+Your central ansible.cfg remains a part of your Git repository under ~/ansible/ and is not duplicated.
