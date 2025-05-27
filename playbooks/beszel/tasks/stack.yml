@@ -1,4 +1,3 @@
-# check if this works it was copied from copilot as is
 ---
 - name: Deploy Beszel as a Portainer stack
   hosts: pserver04
