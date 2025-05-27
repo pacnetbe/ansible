@@ -1,0 +1,56 @@
+# check if this works it was copied from copilot as is
+- name: Deploy Beszel as a Portainer stack
+  hosts: pserver04
+  become: yes
+  vars:
+    portainer_url: "http://your-portainer.example.com/api"
+    portainer_username: "admin"
+    portainer_password: "{{ your_portainer_password }}"
+    # Path to your local docker-compose file for the stack
+    stack_compose_file: "/path/to/beszel-stack.yml"
+    stack_name: "beszel"
+  tasks:
+    - name: Read the stack compose file
+      slurp:
+        src: "{{ stack_compose_file }}"
+      register: stack_file_raw
+
+    - name: Set stack file content as string
+      set_fact:
+        stack_file_content: "{{ stack_file_raw.content | b64decode }}"
+
+    - name: Login to Portainer to get an auth token
+      uri:
+        url: "{{ portainer_url }}/auth"
+        method: POST
+        body_format: json
+        body:
+          username: "{{ portainer_username }}"
+          password: "{{ portainer_password }}"
+        return_content: yes
+      register: portainer_auth
+
+    - name: Extract auth token
+      set_fact:
+        portainer_token: "{{ portainer_auth.json.jwt }}"
+
+    - name: Get current Kubernetes or Swarm/endpoint id if needed
+      # You might need additional tasks to determine the endpoint id or swarm id.
+      debug:
+        msg: "Your endpoint (or swarm) ID must be provided here"
+    
+    - name: Create or update the Portainer stack
+      uri:
+        url: "{{ portainer_url }}/stacks"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ portainer_token }}"
+        body_format: json
+        body:
+          Name: "{{ stack_name }}"
+          SwarmID: ""  # For standalone Docker, leave empty; else provide your swarm id.
+          StackFileContent: "{{ stack_file_content }}"
+          Prune: true  # remove services that are no longer in the compose file (optional)
+        status_code: [200, 201]
+      register: stack_result
+      # If updating an existing stack, you might need to use PUT and include the stack id.
