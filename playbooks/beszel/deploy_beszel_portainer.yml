@@ -1,1 +1,10 @@
+---
+- name: Deploy Beszel & Beszel-Agent
+  hosts: "{{ target_group | default('linux_servers') }}"
+  become: yes
 
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - import_tasks: tasks/stack.yml
