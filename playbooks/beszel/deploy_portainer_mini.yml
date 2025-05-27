@@ -1,0 +1,17 @@
+---
+- name: Deploy Beszel & Beszel-Agent
+  hosts: "pserver04"
+  become: yes
+  vars:
+    portainer_url: "https://pserver04.dmz:9443/"
+    portainer_username: "pacnetadmin"
+    portainer_password: "pac*net-2025" # "{{ your_portainer_password }}"
+    # Path to your local docker-compose file for the stack
+    stack_compose_file: "./files/beszel-compose.yml"
+    stack_name: "beszel"
+
+  vars_files:
+    - vars/container.yml
+
+  tasks:
+    - import_tasks: tasks/container.yml
