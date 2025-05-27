@@ -1,1 +1,5 @@
-
+---
+beszel_deploy_path: /data/beszel
+compose_files:
+  - beszel-compose.yml
+  - beszel-agent-compose.yml
