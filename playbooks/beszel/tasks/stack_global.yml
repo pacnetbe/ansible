@@ -8,12 +8,15 @@
   hosts: "{{ target_group | default('linux_servers') }}"
   become: yes
   vars:
-    portainer_url: "http://your-portainer.example.com/api"
-    portainer_username: "admin"
-    portainer_password: "{{ your_portainer_password }}"
-    # Path to your local docker-compose file for the stack
-    stack_compose_file: "/path/to/beszel-stack.yml"
+    # Override these via -e or in your inventory if needed.
+    portainer_url: "http://{{ portainer_host | default('your-portainer.example.com') }}/api"
+    portainer_username: "{{ portainer_username | default('admin') }}"
+    # You must supply portainer_password externally (via -e or inventory).
+    portainer_password: "{{ portainer_password }}"
+    # Relative path to your docker-compose file for the stack.
+    stack_compose_file: "{{ playbook_dir }}/beszel-stack.yml"
     stack_name: "beszel"
+
   tasks:
     - name: Read the stack compose file
       slurp:
@@ -59,3 +62,6 @@
         status_code: [200, 201]
       register: stack_result
       # If updating an existing stack, you might need to use PUT and include the stack id.
+
+    - debug:
+        msg: "Stack has been deployed/updated successfully."  
