@@ -1,0 +1,35 @@
+---
+- name: Ensure Docker Engine is installed
+  apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
+- name: Ensure python3-pip is installed (for docker-compose)
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Install docker-compose via pip
+  pip:
+    name: docker-compose
+    executable: pip3
+
+- name: Create deployment directory
+  file:
+    path: "{{ beszel_deploy_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy Compose files to host
+  copy:
+    src: "{{ item }}"
+    dest: "{{ beszel_deploy_path }}/{{ item }}"
+    mode: '0644'
+  loop: "{{ compose_files }}"
+
+- name: Launch services via docker-compose
+  community.docker.docker_compose:
+    project_src: "{{ beszel_deploy_path }}"
+    files: "{{ compose_files }}"
+    state: present
