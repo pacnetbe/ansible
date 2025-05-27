@@ -4,6 +4,19 @@
     default_env_path: "~/ansible-env"
     log_file: "/var/log/ansible_env.log"
   tasks:
+    - name: Ensure .bashrc exists
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        state: touch
+
+    - name: Set ANSIBLE_CONFIG in .bashrc
+      lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        regexp: '^export ANSIBLE_CONFIG='
+        line: 'export ANSIBLE_CONFIG=~/ansible/ansible.cfg'
+        insertafter: EOF
+      notify: Inform user to reload shell
+
     - name: Set virtual environment path variable dynamically
       set_fact:
         env_path: "{{ ansible_env_paths[inventory_hostname] | default(default_env_path) }}"
@@ -51,3 +64,9 @@
     - name: Reload bashrc to activate aliases
       shell: source ~/.bashrc
 
+  handlers:
+    - name: Inform user to reload shell
+      debug:
+        msg: >
+          "The ANSIBLE_CONFIG environment variable has been set.
+           Please run 'source ~/.bashrc' or restart your terminal session for the settings to take effect."
