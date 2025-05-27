@@ -17,10 +17,8 @@ eg: root and beszel
 # 2. Tell Git which paths to populate in your working tree:
 :/$ git sparse-checkout set \
   ansible.cfg \
-  inventory/hosts.ini \
-  inventory/group_vars/ \
-  inventory/host_vars/ \
-  beszel/
+  inventory/** \
+  beszel/**
 
 ansible/
 ├── ansible.cfg
@@ -42,10 +40,8 @@ I get fatal: 'ansible.cfg' is not a directory; to treat it as a directory anyway
 # 2. Now set both files and dirs
 :/$ git sparse-checkout set \
   ansible.cfg \
-  inventory/hosts.ini \
-  inventory/group_vars/ \
-  inventory/host_vars/ \
-  beszel/
+  inventory/** \
+  beszel/**
 
 If you want a fresh, filtered clone (shallow blobs + sparse)
 # 1. Clone sparsely with blob filtering
@@ -61,10 +57,8 @@ If you want a fresh, filtered clone (shallow blobs + sparse)
 :/$ git sparse-checkout init --no-cone
 :/$ git sparse-checkout set \
   ansible.cfg \
-  inventory/hosts.ini \
-  inventory/group_vars/ \
-  inventory/host_vars/ \
-  beszel/
+  inventory/** \
+  beszel/**
 
 # to re-enable full pull:
 :/$ cd /path/to/ansible
