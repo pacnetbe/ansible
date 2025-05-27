@@ -1,10 +1,30 @@
-- hosts: all
+- hosts: ansible_hosts
   become: true
   vars:
     default_env_path: "~/ansible-env"
     log_file: "/var/log/ansible_env.log"
+
+  # Optional pre_task to check if the ansible command exists
+  pre_tasks:
+    - name: Check if Ansible is installed on the host
+      command: which ansible
+      register: ansible_installed
+      changed_when: false
+      failed_when: false
+
   tasks:
-    - name: Ensure .bashrc exists
+    # You can skip tasks if Ansible isn’t installed.
+    - name: Verify ansible installed (skip if not installed)
+      debug:
+        msg: "Ansible is installed on {{ inventory_hostname }}."
+      when: ansible_installed.rc == 0
+
+    - name: Fail if ansible is not installed (optional)
+      fail:
+        msg: "Ansible is not installed on {{ inventory_hostname }}. Skipping configuration."
+      when: ansible_installed.rc != 0
+
+    - name: Ensure .bashrc exists for user
       file:
         path: "{{ lookup('env', 'HOME') }}/.bashrc"
         state: touch
@@ -15,7 +35,7 @@
         regexp: '^export ANSIBLE_CONFIG='
         line: 'export ANSIBLE_CONFIG=~/ansible/ansible.cfg'
         insertafter: EOF
-      notify: Inform user to reload shell
+      notify: remind to reload shell
 
     - name: Set virtual environment path variable dynamically
       set_fact:
@@ -27,7 +47,7 @@
         state: directory
         mode: '0755'
 
-    - name: Ensure virtual environment exists
+    - name: Ensure virtual environment directory exists
       file:
         path: "{{ env_path }}"
         state: directory
@@ -51,22 +71,23 @@
 
     - name: Ensure alias for StartAnsible exists in .bashrc
       lineinfile:
-        path: ~/.bashrc
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        regexp: '^alias StartAnsible='
         line: 'alias StartAnsible="source /opt/scripts/start_ansible_env.sh"'
         create: yes
 
     - name: Ensure alias for StopAnsible exists in .bashrc
       lineinfile:
-        path: ~/.bashrc
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        regexp: '^alias StopAnsible='
         line: 'alias StopAnsible="source /opt/scripts/stop_ansible_env.sh"'
         create: yes
 
-    - name: Reload bashrc to activate aliases
-      shell: source ~/.bashrc
-
+    # We no longer attempt to "reload" bashrc from within Ansible since it only runs in a subshell.
   handlers:
-    - name: Inform user to reload shell
+    - name: remind to reload shell
       debug:
         msg: >
-          "The ANSIBLE_CONFIG environment variable has been set.
-           Please run 'source ~/.bashrc' or restart your terminal session for the settings to take effect."
+          "The ANSIBLE_CONFIG environment variable and alias updates have been applied.
+           For these changes to take effect in your interactive shell, please run
+           'source ~/.bashrc' or restart your terminal session."
