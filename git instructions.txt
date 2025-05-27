@@ -1,0 +1,74 @@
+# A/ Pull a repo
+cd ../ansible # make sure you are above ansible directory
+:/$ git pull origin main
+
+# Allow partial pull
+eg: root and beszel
+
+# 1. Clone the repo sparsely (no blobs, no checkout yet)
+:/$ git clone \
+  --filter=blob:none \
+  --sparse \
+  git@github.com:your-org/ansible.git \
+  ansible
+
+:/$ cd ansible
+
+# 2. Tell Git which paths to populate in your working tree:
+:/$ git sparse-checkout set \
+  ansible.cfg \
+  inventory/hosts.ini \
+  inventory/group_vars/ \
+  inventory/host_vars/ \
+  beszel/
+
+ansible/
+├── ansible.cfg
+├── inventory/
+│   ├── hosts.ini
+│   ├── group_vars/
+│   └── host_vars/
+└── beszel/
+    ├── beszel-compose.yml
+    └── beszel-agent-compose.yml
+
+I get fatal: 'ansible.cfg' is not a directory; to treat it as a directory anyway, rerun with --skip-checks
+> This is happening because by default your sparse‐checkout is in “cone” mode, which only allows directory patterns. When you give it a file (like ansible.cfg), it complains it’s not a directory.
+
+:/$ cd ansible
+# 1. Re-init sparse-checkout in non-cone mode
+:/$ git sparse-checkout init --no-cone
+
+# 2. Now set both files and dirs
+:/$ git sparse-checkout set \
+  ansible.cfg \
+  inventory/hosts.ini \
+  inventory/group_vars/ \
+  inventory/host_vars/ \
+  beszel/
+
+If you want a fresh, filtered clone (shallow blobs + sparse)
+# 1. Clone sparsely with blob filtering
+:/$ git clone \
+  --filter=blob:none \
+  --sparse \
+  git@github.com:your-org/ansible.git \
+  ansible
+
+:/$ cd ansible
+
+# 2. Init in no-cone mode and check out your paths
+:/$ git sparse-checkout init --no-cone
+:/$ git sparse-checkout set \
+  ansible.cfg \
+  inventory/hosts.ini \
+  inventory/group_vars/ \
+  inventory/host_vars/ \
+  beszel/
+
+# to re-enable full pull:
+:/$ cd /path/to/ansible
+1. Turn off sparse-checkout
+:/$ git sparse-checkout disable
+2. Fetch & merge everything from the origin
+:/$ git pull origin main
