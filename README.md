@@ -14,3 +14,4 @@ ansible directory structure:
 - /home/user/ansible/inventory/host_vars # 
 - /home/user/ansible/inventory/hosts.ini # list of hosts
 - /home/user/ansible/<playbook directories>
+- each playbook directory contains the yml playbook and directory structure needed for the playbook eg files, tasks, templates, vars and a symlink to /home/user/ansible.cfg
