@@ -1,65 +1,53 @@
----
-- name: Deploy Beszel as a Portainer stack
-  hosts: pserver04
-  become: yes
-  vars:
-    portainer_url: "https://pserver04.dmz:9443/"
-    portainer_username: "pacnetadmin"
-    portainer_password: "pac*net-2025" # "{{ your_portainer_password }}"
-    # Path to your local docker-compose file for the stack
-    stack_compose_file: "./files/beszel-compose.yml"
-    stack_name: "beszel"
-  tasks:
-    - name: Read the stack compose file
-      slurp:
-        src: "{{ stack_compose_file }}"
-      register: stack_file_raw
+- name: Read the stack compose file
+  slurp:
+	src: "{{ stack_compose_file }}"
+  register: stack_file_raw
 
-    - name: Set stack file content as string
-      set_fact:
-        stack_file_content: "{{ stack_file_raw.content | b64decode }}"
+- name: Set stack file content as string
+  set_fact:
+	stack_file_content: "{{ stack_file_raw.content | b64decode }}"
 
-    - name: try login to portainer  
-      block:
-      - name: Login to Portainer to get an auth token
-        uri:
-          url: "{{ portainer_url }}/auth" # what happens if the certificate is not valid
-          method: POST
-          body_format: json
-          body:
-            username: "{{ portainer_username }}"
-            password: "{{ portainer_password }}"
-          # validate_certs: no # handled self-signed or expired certificates
-          validate_certs: yes #better but need the rescue part
-          return_content: yes
-        register: portainer_auth
-      rescue:
-      - name:
-        debug:
-          msg: "There was an error connecting to Portainer. The certificate is self-signed or might be invalid."
-      
+- name: try login to portainer  
+  block:
+  - name: Login to Portainer to get an auth token
+	uri:
+	  url: "{{ portainer_url }}/auth" # what happens if the certificate is not valid
+	  method: POST
+	  body_format: json
+	  body:
+		username: "{{ portainer_username }}"
+		password: "{{ portainer_password }}"
+	  # validate_certs: no # handled self-signed or expired certificates
+	  validate_certs: yes #better but need the rescue part
+	  return_content: yes
+	register: portainer_auth
+  rescue:
+  - name:
+	debug:
+	  msg: "There was an error connecting to Portainer. The certificate is self-signed or might be invalid."
+  
 
-    - name: Extract auth token
-      set_fact:
-        portainer_token: "{{ portainer_auth.json.jwt }}"
+- name: Extract auth token
+  set_fact:
+	portainer_token: "{{ portainer_auth.json.jwt }}"
 
-    - name: Get current Kubernetes or Swarm/endpoint id if needed
-      # You might need additional tasks to determine the endpoint id or swarm id.
-      debug:
-        msg: "Your endpoint (or swarm) ID must be provided here"
-    
-    - name: Create or update the Portainer stack
-      uri:
-        url: "{{ portainer_url }}/stacks"
-        method: POST
-        headers:
-          Authorization: "Bearer {{ portainer_token }}"
-        body_format: json
-        body:
-          Name: "{{ stack_name }}"
-          SwarmID: ""  # For standalone Docker, leave empty; else provide your swarm id.
-          StackFileContent: "{{ stack_file_content }}"
-          Prune: true  # remove services that are no longer in the compose file (optional)
-        status_code: [200, 201]
-      register: stack_result
-      # If updating an existing stack, you might need to use PUT and include the stack id.
+- name: Get current Kubernetes or Swarm/endpoint id if needed
+  # You might need additional tasks to determine the endpoint id or swarm id.
+  debug:
+	msg: "Your endpoint (or swarm) ID must be provided here"
+
+- name: Create or update the Portainer stack
+  uri:
+	url: "{{ portainer_url }}/stacks"
+	method: POST
+	headers:
+	  Authorization: "Bearer {{ portainer_token }}"
+	body_format: json
+	body:
+	  Name: "{{ stack_name }}"
+	  SwarmID: ""  # For standalone Docker, leave empty; else provide your swarm id.
+	  StackFileContent: "{{ stack_file_content }}"
+	  Prune: true  # remove services that are no longer in the compose file (optional)
+	status_code: [200, 201]
+  register: stack_result
+  # If updating an existing stack, you might need to use PUT and include the stack id.
