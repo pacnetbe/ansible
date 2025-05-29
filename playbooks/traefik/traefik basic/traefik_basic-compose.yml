@@ -1,0 +1,19 @@
+services:
+  reverse-proxy:
+    image: traefik:latest
+    # command: --configFile=/etc/traefik/traefik.yml
+    # by default, it should find it in ./config
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik.yml:/etc/traefik/traefik.yml
+      - ./config/acme.json:/acme.json
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true

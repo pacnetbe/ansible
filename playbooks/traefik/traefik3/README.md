@@ -1,4 +1,5 @@
 this is based on Jim's garage traefik3 video
+= https://www.youtube.com/watch?v=CmUzMi5QLzI
 
 
 
