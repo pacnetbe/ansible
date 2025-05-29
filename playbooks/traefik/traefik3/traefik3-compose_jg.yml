@@ -1,56 +1,70 @@
 # copied from https://github.com/JamesTurland/JimsGarage/blob/main/Traefikv3/docker-compose.yaml
-# need some tweaking
+# need some tweaking:
+#   - check name of cert-token
+#   - check name of network
+#   - check CF_API_EMAIL=your@email.com # Cloudflare email
+#   - change the volume mapping on host
+
 secrets:
   cf-token:
-    file: ./cf-token
+    file: ./cert-token # certificate token provided by domain name registrar
 services:
   traefik:
+    environment:
+        # when defined in both compose file and .env, compose value takes precedence
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS} # defined in .env
+        # - CF_API_EMAIL=your@email.com # Cloudflare email could be defined in .env file using a variable
+        # - CF_DNS_API_TOKEN=YOUR-TOKEN # Cloudflare API Token # if we don't want to use the file "cert-token"
+        # but less secure because the token is in this compose file
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/cf-token # see https://doc.traefik.io/traefik/https/acme/#providers
+        # token file is the proper way to do it
+      - TRAEFIK_DOCKER_PATH=<path/to/docker/container/traefik> # could also be defined in .env
+      - HOST_NAME=<replace with host name>
+      - HOST_DOMAIN=<replace with domain>
+      - CONTAINER_NAME=traefik # can be replace and should be the name of the container so DNS Proxy Server can resolve it (i think)
+      - NETWORK_NAME=proxy
     image: traefik:latest # or traefik:v3.3 to pin a version
-    container_name: traefik
+    container_name: ${CONTAINER_NAME}
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true # helps to increase security
     secrets:
-      - cf-token # the secret at the top of this file
+      - cert-token # the secret at the top of this file
     env_file:
       - .env # store other secrets e.g., dashboard password
     networks:
-       proxy:
+       proxy: #need to be checked
     ports:
       - 80:80
       - 443:443
      # - 10000:10000 # optional
      # - 33073:33073 # optional
     environment:
-      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
-      # - CF_API_EMAIL=your@email.com # Cloudflare email
-      # - CF_DNS_API_TOKEN=YOUR-TOKEN # Cloudflare API Token
-      - CF_DNS_API_TOKEN_FILE=/run/secrets/cf-token # see https://doc.traefik.io/traefik/https/acme/#providers
-      # token file is the proper way to do it
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /home/ubuntu/docker/traefik/traefik.yaml:/traefik.yaml:ro
-      - /home/ubuntu/docker/traefik/acme.json:/acme.json
-      - /home/ubuntu/docker/traefik/config.yaml:/config.yaml:ro
-      - /home/ubuntu/docker/traefik/logs:/var/log/traefik
+      # originall - /home/ubuntu/docker/traefik/<file>.<ext>:/<file>.<ext>(:ro)
+      - ${TRAEFIK_DOCKER_PATH}/traefik.yaml:/traefik.yaml:ro
+      - ${TRAEFIK_DOCKER_PATH}/acme.json:/acme.json
+      - ${TRAEFIK_DOCKER_PATH}/config.yaml:/config.yaml:ro
+      - ${TRAEFIK_DOCKER_PATH}/logs:/var/log/traefik
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik-docker.jimsgarage.co.uk`)"
+      - "traefik.http.routers.traefik.rule=Host(`${SUB_DOMAIN}.${HOST_NAME}.${HOST_DOMAIN}`)"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}"
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik-docker.jimsgarage.co.uk`)"
+      - "traefik.http.routers.traefik-secure.rule=Host(`${CONTAINER_NAME}.${HOST_NAME}.${HOST_DOMAIN}`)"
       - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
       - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].main=jimsgarage.co.uk"
-      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.jimsgarage.co.uk"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare" # cert-resolver is defined in traefik.yml
+      - "traefik.http.routers.traefik-secure.tls.domains[0].main=${HOST_NAME}.${HOST_DOMAIN}"
+      - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${HOST_NAME}.${HOST_DOMAIN}"
       - "traefik.http.routers.traefik-secure.service=api@internal"
 
 networks:
-  proxy:
+  ${NETWORK_NAME}:
     external: true # or comment this line to auto create the network
