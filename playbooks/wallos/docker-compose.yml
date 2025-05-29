@@ -1,0 +1,15 @@
+services:
+  wallos:
+    container_name: wallos                          # Names the container for easier management.
+    image: bellamy/wallos:latest                    # Specifies the Wallos Docker image.
+    ports:
+      - "8282:80/tcp"                               # Exposes Wallos on port 8282.
+    environment:
+      TZ: Europe/Brussels                         # Sets the timezone for the container.
+    volumes:
+      - wallos:/var/www/html/db                     # Stores Wallos' database for persistent data.
+      - wallos:/var/www/html/images/uploads/logos # Stores logos uploaded to the app.
+    restart: unless-stopped                         # Ensures the container restarts automatically unless manually stopped.
+
+volumes:
+  wallos:
