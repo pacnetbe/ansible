@@ -1,0 +1,3 @@
+admin_user: pacnetadmin
+docker_base_dir: /home/pacnetadmin/docker
+ansible_python_interpreter: /usr/bin/python3

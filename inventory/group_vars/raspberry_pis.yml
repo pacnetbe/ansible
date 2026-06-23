@@ -1,1 +1,1 @@
-ansible_python_interpreter: /usr/bin/python3
+# Raspberry Pi specific vars (currently inherited from all.yml)
