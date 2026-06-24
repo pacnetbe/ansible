@@ -1,34 +1,34 @@
 ---
 - name: Deploy Traefik reverse proxy
-  hosts: pi4-01
+  hosts: "{{ deploy_target | default('traefik_hosts') }}"
   become: true
 
   vars:
-    traefik_dir: /home/pacnetadmin/docker/traefik
+    traefik_dir: "{{ docker_base_dir }}/traefik"
 
   tasks:
     - name: Create Traefik directory
       file:
         path: "{{ traefik_dir }}"
         state: directory
-        owner: pacnetadmin
-        group: pacnetadmin
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
         mode: "0755"
 
     - name: Copy docker-compose.yml
       copy:
         src: files/docker-compose.yml
         dest: "{{ traefik_dir }}/docker-compose.yml"
-        owner: pacnetadmin
-        group: pacnetadmin
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
         mode: "0644"
 
     - name: Copy traefik.yml
       copy:
         src: files/traefik.yml
         dest: "{{ traefik_dir }}/traefik.yml"
-        owner: pacnetadmin
-        group: pacnetadmin
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
         mode: "0644"
 
     - name: Start Traefik with docker compose
