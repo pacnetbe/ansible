@@ -1,0 +1,35 @@
+services:
+  frigate:
+    container_name: frigate
+    privileged: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    image: ghcr.io/blakeblackshear/frigate:stable
+    shm_size: "512m"
+    devices:
+      - /dev/apex_0:/dev/apex_0                   # Coral M.2 (PCIe)
+      - /dev/dri/renderD128:/dev/dri/renderD128   # Intel iGPU (OpenVINO/VAAPI)
+      - /dev/dri/card0:/dev/dri/card0
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/frigate/config:/config
+      - /srv/frigate/media:/media/frigate
+    ports:
+      - "5000:5000"   # Web UI
+      - "8554:8554"   # RTSP streams
+      - "8555:8555/tcp"
+      - "8555:8555/udp"
+    environment:
+      FRIGATE_RTSP_PASSWORD: "{{ frigate_rtsp_password }}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frigate.rule=Host(`frigate.lan`)"
+      - "traefik.http.routers.frigate.entrypoints=websecure"
+      - "traefik.http.routers.frigate.tls=true"
+      - "traefik.http.services.frigate.loadbalancer.server.port=5000"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,46 @@
+---
+- name: Deploy Frigate NVR
+  hosts: "{{ deploy_target | default('pserver2502') }}"
+  become: true
+
+  vars:
+    frigate_dir: /opt/frigate
+    frigate_config_dir: /opt/frigate/config
+
+  tasks:
+    - name: Create Frigate directory
+      file:
+        path: "{{ frigate_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Create Frigate config directory
+      file:
+        path: "{{ frigate_config_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Copy docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: "{{ frigate_dir }}/docker-compose.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
+    - name: Copy Frigate config
+      copy:
+        src: files/config.yml
+        dest: "{{ frigate_config_dir }}/config.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
+    - name: Deploy Frigate
+      community.docker.docker_compose_v2:
+        project_src: "{{ frigate_dir }}"
+        state: present
