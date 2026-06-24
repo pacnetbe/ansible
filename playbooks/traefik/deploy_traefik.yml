@@ -35,3 +35,5 @@
       community.docker.docker_compose_v2:
         project_src: "{{ traefik_dir }}"
         state: present
+        remove_orphans: true
+
