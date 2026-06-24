@@ -1,40 +1,30 @@
 ---
-- name: Deploy Portainer Agent using Docker Compose via Ansible
-  hosts: PI04
+- name: Deploy Portainer Agent
+  hosts: "{{ deploy_target | default('portainer_agents') }}"
   become: true
+
   vars:
-    portainer_compose_dir: /opt/portainer
-    compose_file: docker-compose.yml
+    portainer_dir: "{{ docker_base_dir }}/portainer"
 
   tasks:
-    - name: Ensure directory for Portainer compose file exists
+    - name: Create Portainer directory
       file:
-        path: "{{ portainer_compose_dir }}"
+        path: "{{ portainer_dir }}"
         state: directory
-        mode: '0755'
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
 
-    - name: Copy Docker Compose file for Portainer Agent
+    - name: Copy docker-compose.yml
       copy:
-        dest: "{{ portainer_compose_dir }}/{{ compose_file }}"
-        content: |
-          version: "3.9"
-          services:
-            portainer_agent:
-              image: portainer/agent:2.27.6
-              container_name: portainer_agent
-              ports:
-                - "9001:9001"
-              volumes:
-                - /var/run/docker.sock:/var/run/docker.sock
-                - /var/lib/docker/volumes:/var/lib/docker/volumes
-                - /:/host
-              restart: always
-        mode: '0644'
+        src: files/docker-compose.yml
+        dest: "{{ portainer_dir }}/docker-compose.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
 
-    - name: Deploy the Portainer Agent container with Docker Compose
-      community.docker.docker_compose:
-        project_src: "{{ portainer_compose_dir }}"
+    - name: Start Portainer agent with docker compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ portainer_dir }}"
         state: present
-        restarted: yes
-        pull: yes
 
