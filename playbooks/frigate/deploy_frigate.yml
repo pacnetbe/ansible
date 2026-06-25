@@ -32,13 +32,13 @@
         group: "{{ admin_user }}"
         mode: "0644"
 
-    - name: Copy Frigate config
-      copy:
-        src: files/config.yml
-        dest: "{{ frigate_config_dir }}/config.yml"
-        owner: "{{ admin_user }}"
-        group: "{{ admin_user }}"
-        mode: "0644"
+#    - name: Copy Frigate config
+#      copy:
+#        src: files/config.yml
+#        dest: "{{ frigate_config_dir }}/config.yml"
+#        owner: "{{ admin_user }}"
+#        group: "{{ admin_user }}"
+#        mode: "0644"
 
     - name: Deploy Frigate
       community.docker.docker_compose_v2:
