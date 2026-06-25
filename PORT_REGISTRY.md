@@ -32,7 +32,7 @@
 | Frigate WebRTC | 8555 | - | - | - | 8555 | Direct, not via Traefik |
 | Beszel Agent | - | - | - | - | - | No port exposed |
 | Twingate | - | - | - | - | - | No port exposed |
-| Netdata | - | - | - | - | - | No port exposed |
+| NetData | 19999 | - | - | 19999 | 19999 | netdata.<host>.lan |
 
 ## Traefik subdomains (via DNS wildcard *.hostname.lan)
 
@@ -45,6 +45,7 @@
 | https://kuma.lan | pi4-01 | UptimeKuma (primary) |
 | https://frigate.lan | pserver2502 | Frigate NVR |
 | https://portainer.lan | pi5-01 | Portainer CE (primary) |
+| https://netdata.pserver2502.lan | pserver2502 | NetData monitoring |
 
 ## Rules
 - Ports 80, 443, 8080 reserved for Traefik on all hosts
