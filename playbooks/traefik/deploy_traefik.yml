@@ -16,8 +16,8 @@
         mode: "0755"
 
     - name: Copy docker-compose.yml
-      copy:
-        src: files/docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
         dest: "{{ traefik_dir }}/docker-compose.yml"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
