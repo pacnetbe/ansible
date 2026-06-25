@@ -1,41 +1,30 @@
-services:
-  netdata:
-    image: netdata/netdata
-    container_name: netdata
-    pid: host
-    # network_mode: host
-    networks:
-      - dns
-    restart: unless-stopped
-    cap_add:
-      - SYS_PTRACE
-      - SYS_ADMIN
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - netdataconfig:/etc/netdata
-      - netdatalib:/var/lib/netdata
-      - netdatacache:/var/cache/netdata
-      - /:/host/root:ro,rslave
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /etc/os-release:/host/etc/os-release:ro
-      - /var/log:/host/var/log:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /run/dbus:/run/dbus:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.netdata.rule=Host(`netdata.vserver04.lan`)"
-      - "traefik.http.routers.netdata.entrypoints=web"
-      
-volumes:
-  netdataconfig:
-  netdatalib:
-  netdatacache:
+---
+- name: Deploy NetData
+  hosts: "{{ deploy_target | default('pserver2502') }}"
+  become: true
 
-networks:
-  dns:
-    external: true
+  vars:
+    netdata_dir: "{{ docker_base_dir }}/netdata"
+
+  tasks:
+    - name: Create NetData directory
+      file:
+        path: "{{ netdata_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Copy docker-compose.yml
+      copy:
+        src: files/docker-compose.yml
+        dest: "{{ netdata_dir }}/docker-compose.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
+    - name: Deploy NetData
+      community.docker.docker_compose_v2:
+        project_src: "{{ netdata_dir }}"
+        state: present
+
