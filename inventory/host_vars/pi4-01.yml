@@ -1,3 +1,3 @@
-short_name: pserver04
+short_name: pi4
 ansible_user: pacnetadmin
 ansible_python_interpreter: /usr/bin/python3

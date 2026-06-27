@@ -23,12 +23,18 @@ services:
       - /var/log:/host/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /run/dbus:/run/dbus:ro
+
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.netdata.rule=Host(`netdata.pserver2502.lan`)"
-      - "traefik.http.routers.netdata.entrypoints=websecure"
-      - "traefik.http.routers.netdata.tls=true"
-      - "traefik.http.services.netdata.loadbalancer.server.port=19999"
+      - "traefik.http.routers.netdata-secure.rule=Host(`netdata.{{ inventory_hostname }}.lan`)"
+      - "traefik.http.routers.netdata-secure.entrypoints=websecure"
+      - "traefik.http.routers.netdata-secure.tls=true"
+      - "traefik.http.routers.netdata-secure.service=netdata-svc"
+      - "traefik.http.routers.netdata-plain.rule=Host(`netdata-{{ short_name }}.pacnet.be`)"
+      - "traefik.http.routers.netdata-plain.entrypoints=web"
+      - "traefik.http.routers.netdata-plain.service=netdata-svc"
+      - "traefik.http.services.netdata-svc.loadbalancer.server.port=19999"
+
     networks:
       - proxy
 

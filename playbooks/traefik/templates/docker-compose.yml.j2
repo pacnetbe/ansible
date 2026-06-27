@@ -3,8 +3,6 @@ services:
     image: traefik:v3
     container_name: traefik
     restart: unless-stopped
-    environment:
-      - DOCKER_API_VERSION=1.54
     ports:
       - "80:80"
       - "443:443"
@@ -13,12 +11,16 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/traefik.yml:ro
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.{{ inventory_hostname }}.lan`)"
       - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
       - "traefik.http.routers.traefik-dashboard.tls=true"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard-http.rule=Host(`traefik-{{ short_name }}.pacnet.be`)"
+      - "traefik.http.routers.traefik-dashboard-http.entrypoints=web"
+      - "traefik.http.routers.traefik-dashboard-http.service=api@internal"
     networks:
       - proxy
 

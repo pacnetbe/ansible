@@ -1,2 +1,3 @@
-ansible_python_interpreter: /usr/bin/python3
+short_name: pserver2502
 ansible_user: pacnetadmin
+ansible_python_interpreter: /usr/bin/python3

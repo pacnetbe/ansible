@@ -1,6 +1,6 @@
 ---
 - name: Deploy NetData
-  hosts: "{{ deploy_target | default('pserver2502') }}"
+  hosts: "{{ deploy_target | default('docker_hosts') }}"
   become: true
 
   vars:
@@ -16,8 +16,8 @@
         mode: "0755"
 
     - name: Copy docker-compose.yml
-      copy:
-        src: files/docker-compose.yml
+      template:
+        src: templates/docker-compose.yml.j2
         dest: "{{ netdata_dir }}/docker-compose.yml"
         owner: "{{ admin_user }}"
         group: "{{ admin_user }}"
