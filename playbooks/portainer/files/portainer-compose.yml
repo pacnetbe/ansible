@@ -9,13 +9,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.lan`)"
-      - "traefik.http.routers.portainer.entrypoints=websecure"
-      - "traefik.http.routers.portainer.tls=true"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9443"
-      - "traefik.http.services.portainer.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.portainer-secure.rule=Host(`portainer.lan`)"
+      - "traefik.http.routers.portainer-secure.entrypoints=websecure"
+      - "traefik.http.routers.portainer-secure.tls=true"
+      - "traefik.http.routers.portainer-secure.service=portainer-svc"
+      - "traefik.http.routers.portainer-plain.rule=Host(`portainer.pacnet.be`)"
+      - "traefik.http.routers.portainer-plain.entrypoints=web"
+      - "traefik.http.routers.portainer-plain.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9443"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.scheme=https"
+
     networks:
       - proxy
 

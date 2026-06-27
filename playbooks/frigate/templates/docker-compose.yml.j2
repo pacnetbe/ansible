@@ -21,12 +21,17 @@ services:
       - "8555:8555/udp"
     environment:
       FRIGATE_RTSP_PASSWORD: "{{ frigate_rtsp_password }}"
+
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frigate.rule=Host(`frigate.lan`)"
-      - "traefik.http.routers.frigate.entrypoints=websecure"
-      - "traefik.http.routers.frigate.tls=true"
-      - "traefik.http.services.frigate.loadbalancer.server.port=5000"
+      - "traefik.http.routers.frigate-secure.rule=Host(`frigate.lan`)"
+      - "traefik.http.routers.frigate-secure.entrypoints=websecure"
+      - "traefik.http.routers.frigate-secure.tls=true"
+      - "traefik.http.routers.frigate-secure.service=frigate-svc"
+      - "traefik.http.routers.frigate-plain.rule=Host(`frigate.pacnet.be`)"
+      - "traefik.http.routers.frigate-plain.entrypoints=web"
+      - "traefik.http.routers.frigate-plain.service=frigate-svc"
+      - "traefik.http.services.frigate-svc.loadbalancer.server.port=5000"
     networks:
       - proxy
 
