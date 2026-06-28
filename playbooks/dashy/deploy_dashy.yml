@@ -2,8 +2,27 @@
 - name: Deploy Dashy
   hosts: "{{ deploy_target | default('pserver04') }}"
   become: true
+
   vars:
     app_dir: "{{ docker_base_dir }}/dashy"
+
+  pre_tasks:
+    - name: Create Dashy directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Copy Dashy config
+      copy:
+        src: files/conf.yml
+        dest: "{{ app_dir }}/conf.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
   roles:
     - docker_app
 

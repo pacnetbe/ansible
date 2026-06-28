@@ -23,6 +23,8 @@ services:
       - "traefik.http.routers.dashy-plain.entrypoints=web"
       - "traefik.http.routers.dashy-plain.service=dashy-svc"
       - "traefik.http.services.dashy-svc.loadbalancer.server.port=8080"
+    volumes:
+      - ./conf.yml:/app/user-data/conf.yml
     networks:
       - proxy
 

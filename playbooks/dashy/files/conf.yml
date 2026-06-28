@@ -1,0 +1,154 @@
+pageInfo:
+  title: PACNET Dashboard
+  description: Home Lab Dashboard
+  navLinks:
+    - title: Homepage
+      path: https://homepage.pacnet.be
+    - title: Portainer
+      path: https://portainer.pacnet.be
+
+appConfig:
+  theme: colorful
+  layout: auto
+  iconSize: medium
+  language: en
+
+sections:
+  - name: Core Network
+    icon: fas fa-network-wired
+    items:
+      - title: Router HA
+        description: CARP VIP
+        icon: hl-pfsense
+        url: https://192.168.1.1:10443
+        statusCheck: true
+      - title: Router 01
+        description: Primary pfSense
+        icon: hl-pfsense
+        url: https://router01.lan:10443
+        statusCheck: true
+      - title: Router 02
+        description: Secondary pfSense
+        icon: hl-pfsense
+        url: https://router02.lan:10443
+        statusCheck: true
+
+  - name: Servers
+    icon: fas fa-server
+    items:
+      - title: pi5-01
+        description: Ansible + Control node
+        icon: hl-raspberry-pi
+        url: https://portainer.pacnet.be
+        statusCheck: true
+      - title: pi4-01
+        description: Pi4 node
+        icon: hl-raspberry-pi
+        url: https://traefik-pi4.pacnet.be
+        statusCheck: true
+      - title: pserver04
+        description: Ubuntu server
+        icon: hl-ubuntu
+        url: https://traefik-pserver04.pacnet.be
+        statusCheck: true
+      - title: pserver2502
+        description: Frigate NVR - Beelink
+        icon: hl-frigate
+        url: https://frigate.pacnet.be
+        statusCheck: true
+
+  - name: Monitoring
+    icon: fas fa-chart-line
+    items:
+      - title: UptimeKuma
+        description: Service monitoring
+        icon: hl-uptime-kuma
+        url: https://kuma.pacnet.be
+        statusCheck: true
+      - title: NetData pi4
+        description: System metrics
+        icon: hl-netdata
+        url: https://netdata-pi4.pacnet.be
+        statusCheck: true
+      - title: NetData pserver04
+        description: System metrics
+        icon: hl-netdata
+        url: https://netdata-pserver04.pacnet.be
+        statusCheck: true
+      - title: Beszel
+        description: Container monitoring
+        icon: hl-beszel
+        url: https://beszel.pacnet.be
+        statusCheck: true
+
+  - name: Tools
+    icon: fas fa-tools
+    items:
+      - title: IT-Tools
+        description: Developer tools
+        icon: hl-it-tools
+        url: https://it-tools.pacnet.be
+        statusCheck: true
+      - title: Netbox
+        description: Network documentation
+        icon: hl-netbox
+        url: http://netbox.pserver04.lan:8010
+        statusCheck: true
+      - title: Wallos
+        description: Subscription tracker
+        icon: hl-wallos
+        url: https://wallos.pacnet.be
+        statusCheck: true
+      - title: Portainer
+        description: Container management
+        icon: hl-portainer
+        url: https://portainer.pacnet.be
+        statusCheck: true
+
+  - name: NAS
+    icon: fas fa-hdd
+    items:
+      - title: HomeNAS
+        description: Synology NAS
+        icon: hl-synology
+        url: https://homenas.lan:5001
+        statusCheck: true
+      - title: PACNAS
+        description: Synology NAS
+        icon: hl-synology
+        url: https://pacnas.lan:5001
+        statusCheck: true
+
+  - name: IoT & Smarthome
+    icon: fas fa-home
+    items:
+      - title: Home Assistant
+        description: Home automation
+        icon: hl-home-assistant
+        url: http://ha.lan:8123
+        statusCheck: true
+      - title: Frigate
+        description: NVR Camera system
+        icon: hl-frigate
+        url: https://frigate.pacnet.be
+        statusCheck: true
+
+  - name: Network Management
+    icon: fas fa-sitemap
+    items:
+      - title: Netbox
+        description: Network documentation
+        icon: hl-netbox
+        url: https://netbox.pacnet.be
+        statusCheck: true
+      - title: Traefik pi4
+        description: Reverse proxy pi4
+        icon: hl-traefik
+        url: https://traefik-pi4.pacnet.be
+        statusCheck: true
+      - title: Traefik pserver04
+        description: Reverse proxy pserver04
+        icon: hl-traefik
+        url: https://traefik-pserver04.pacnet.be
+        statusCheck: true
+
