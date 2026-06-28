@@ -1,0 +1,31 @@
+---
+- name: Deploy Beszel Agent
+  hosts: "{{ deploy_target | default('pi5-01') }}"
+  become: true
+
+  vars:
+    app_dir: "{{ docker_base_dir }}/beszel-agent"
+
+  tasks:
+    - name: Create Beszel agent directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Copy agent docker-compose.yml
+      copy:
+        src: files/agent-compose.yml
+        dest: "{{ app_dir }}/docker-compose.yml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
+    - name: Deploy Beszel Agent
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        state: present
+      ignore_errors: "{{ ansible_check_mode }}"
+
