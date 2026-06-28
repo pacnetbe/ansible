@@ -1,0 +1,29 @@
+services:
+  wallos:
+    container_name: wallos
+    image: bellamy/wallos:latest
+    ports:
+      - "8282:80/tcp"
+    environment:
+      TZ: Europe/Brussels
+    volumes:
+      - './db:/var/www/html/db'
+      - './logos:/var/www/html/images/uploads/logos'
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wallos-secure.rule=Host(`wallos.lan`)"
+      - "traefik.http.routers.wallos-secure.entrypoints=websecure"
+      - "traefik.http.routers.wallos-secure.tls=true"
+      - "traefik.http.routers.wallos-secure.service=wallos-svc"
+      - "traefik.http.routers.wallos-plain.rule=Host(`wallos.pacnet.be`)"
+      - "traefik.http.routers.wallos-plain.entrypoints=web"
+      - "traefik.http.routers.wallos-plain.service=wallos-svc"
+      - "traefik.http.services.wallos-svc.loadbalancer.server.port=80"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+

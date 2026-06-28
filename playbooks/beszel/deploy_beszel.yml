@@ -1,0 +1,9 @@
+---
+- name: Deploy Beszel
+  hosts: "{{ deploy_target | default('pserver04') }}"
+  become: true
+  vars:
+    app_dir: "{{ docker_base_dir }}/beszel"
+  roles:
+    - docker_app
+

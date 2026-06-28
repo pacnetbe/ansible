@@ -1,0 +1,39 @@
+services:
+  beszel:
+    image: henrygd/beszel
+    container_name: beszel
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+    volumes:
+      - ./beszel_data:/beszel_data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.beszel-secure.rule=Host(`beszel.lan`)"
+      - "traefik.http.routers.beszel-secure.entrypoints=websecure"
+      - "traefik.http.routers.beszel-secure.tls=true"
+      - "traefik.http.routers.beszel-secure.service=beszel-svc"
+      - "traefik.http.routers.beszel-plain.rule=Host(`beszel.pacnet.be`)"
+      - "traefik.http.routers.beszel-plain.entrypoints=web"
+      - "traefik.http.routers.beszel-plain.service=beszel-svc"
+      - "traefik.http.services.beszel-svc.loadbalancer.server.port=8090"
+    networks:
+      - proxy
+
+  beszel-agent:
+    image: henrygd/beszel-agent
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      LISTEN: 45876
+      KEY: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILjXF/GWGmXiXdr9d6UCyyYFX09Jfdu8Lz3K8QP8Xhwa'
+
+volumes:
+  beszel_data:
+
+networks:
+  proxy:
+    external: true

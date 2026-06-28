@@ -1,0 +1,32 @@
+services:
+  dashy:
+    image: lissy93/dashy
+    container_name: Dashy
+    ports:
+      - 4000:8080
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashy-secure.rule=Host(`dashy.lan`)"
+      - "traefik.http.routers.dashy-secure.entrypoints=websecure"
+      - "traefik.http.routers.dashy-secure.tls=true"
+      - "traefik.http.routers.dashy-secure.service=dashy-svc"
+      - "traefik.http.routers.dashy-plain.rule=Host(`dashy.pacnet.be`)"
+      - "traefik.http.routers.dashy-plain.entrypoints=web"
+      - "traefik.http.routers.dashy-plain.service=dashy-svc"
+      - "traefik.http.services.dashy-svc.loadbalancer.server.port=8080"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+

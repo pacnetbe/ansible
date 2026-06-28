@@ -1,0 +1,33 @@
+---
+- name: Deploy Homepage
+  hosts: "{{ deploy_target | default('pserver04') }}"
+  become: true
+  vars:
+    app_dir: "{{ docker_base_dir }}/homepage"
+  roles:
+    - docker_app
+  tasks:
+    - name: Create Homepage config directory
+      file:
+        path: "{{ app_dir }}/config"
+        state: directory
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0755"
+
+    - name: Copy Homepage static config files
+      copy:
+        src: "files/config/"
+        dest: "{{ app_dir }}/config/"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
+    - name: Deploy services.yaml from template
+      template:
+        src: templates/services.yaml.j2
+        dest: "{{ app_dir }}/config/services.yaml"
+        owner: "{{ admin_user }}"
+        group: "{{ admin_user }}"
+        mode: "0644"
+
