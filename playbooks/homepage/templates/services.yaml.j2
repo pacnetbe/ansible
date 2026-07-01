@@ -16,16 +16,16 @@
         description: Router-1
         siteMonitor: https://router01.lan:10443
         ping: 10.10.10.2
-        # widget:
-        # type: pfsense
-        # url: http://pfsense.host.or.ip:port
-        # username:  # optional, or API key
-        # password: pass # optional, or API key
+        #widget:
+          #- type: pfsense
+            #url: https://router01.lan:10443 #pfsense.host.or.ip:port
+            #username: pacnetadmin # optional, or API key
+            #password: inspirit-2020-Gaze # optional, or API key
         # headers: # optional, or username/password
         # X-API-Key: key
-        # wan: igb0
+            #wan: igb0
         # version: 2 # optional, defaults to 1 for api v1
-        # fields: ["load", "memory", "temp", "wanStatus"] # optional
+            #fields: ["load", "memory", "temp", "wanStatus"] # optional
     - Router 02:
         href: https://router02.lan:10443
         icon: pfsense.png
@@ -33,15 +33,15 @@
         siteMonitor: https://router02.lan:10443
         ping: 10.10.10.3
         # widget:
-        # type: pfsense
-        # url: http://pfsense.host.or.ip:port
-        # username:  # optional, or API key
-        # password: pass # optional, or API key
+            # - type: pfsense
+            # url: https://router01.lan:10443 # http://pfsense.host.or.ip:port
+            # username:  # optional, or API key
+            # password: pass # optional, or API key
         # headers: # optional, or username/password
         # X-API-Key: key
-        # wan: igb0
+            # wan: igb0
         # version: 2 # optional, defaults to 1 for api v1
-        # fields: ["load", "memory", "temp", "wanStatus"] # optional
+            # fields: ["load", "memory", "temp", "wanStatus"] # optional
 
     - Router 03:
         href: https://192.168.50.1:10443
@@ -64,15 +64,7 @@
         siteMonitor: https://sw01.lan
         ping: 192.168.1.8
         # widget:
-        # type: pfsense
-        # url: http://pfsense.host.or.ip:port
-        # username:  # optional, or API key
-        # password: pass # optional, or API key
-        # headers: # optional, or username/password
-        # X-API-Key: key
-        # wan: igb0
-        # version: 2 # optional, defaults to 1 for api v1
-        # fields: ["load", "memory", "temp", "wanStatus"] # optional
+
     - SW02:
         description: SW02 - GS724Tv4
         href: https://sw02.lan
@@ -124,19 +116,19 @@
               icon: 
               siteMonitor: https://
               ping: 
-    - CPL:
-        - PL1:
-            description: DEVOLO Bridge
-            href: http://192.168.1.16/#/overview
-            icon: devolo.png
-            ping: 192.168.1.16
-            siteMonitor: http://192.168.1.16
-        - PL2:
-            description: DEVOLO 1st floor
-            href: http://192.168.1.18/#/overview
-            icon: devolo.png
-            ping: 192.168.1.18
-            siteMonitor: http://192.168.1.18
+    # - CPL:
+        # - PL1:
+            # description: DEVOLO Bridge
+            # href: http://192.168.1.16/#/overview
+            # icon: devolo.png
+            # ping: 192.168.1.16
+            # siteMonitor: http://192.168.1.16
+        # - PL2:
+            # description: DEVOLO 1st floor
+            # href: http://192.168.1.18/#/overview
+            # icon: devolo.png
+            # ping: 192.168.1.18
+            # siteMonitor: http://192.168.1.18
 - Servers:
     - R710:
         description: DELL R710 2 Intel Xeon@2.67 | 24GB - VMWWARE
@@ -159,15 +151,47 @@
     - R310-DRAC:
         icon: dell.png
         ping: 10.10.10.120
-    - pserver07:
-        description: Intel __ | xxGB - unRAID
-        href: http://pserver07.dmz/
+
+    - pserver2502:
+        description: Intel TwinLake N150 4C/4T Max 3.6GHz | Intel iGPU - 24EUs | 16GB
+        href: http://pserver2502.dmz:19999/
         icon: linux.png
-        siteMonitor: http://pserver07.dmz/
-        ping: pserver07.dmz
-        widget:
+        siteMonitor: http://pserver2502.dmz/
+        ping: pserver2502.lan
+        # docker:
+            # host: psever07.dmz
+            # port: 2375
+        # server: pserver07
+        # resources:
+            # label: System
+            # cpu: true
+            # memory: true
+        # container: pserver07.dmz
+        # widget:
+           # type: netdata
+           # url: http://pserver07.dmz:19999
+        widget: 
+          #type: portainer
+            #url: https://pserver2502.dmz:9443
+            #env: 2
+            #key: ptr_WCj4YXXttOaDqK0ylOjI0juvXJBnEwDJr2Ef2qPH57M=
             type: netdata
-            url: http://pserver07.dmz:19999
+            url: http://pserver2502.dmz:19999
+            mappings:
+            - field:
+              alarms: warning
+              label: Warnings
+              format: number
+
+    # - pserver07:
+        # description: Intel __ | xxGB - unRAID
+        # href: http://pserver07.dmz/
+        # icon: linux.png
+        # siteMonitor: http://pserver07.dmz/
+        # ping: pserver07.dmz
+        # widget:
+            # type: netdata
+            # url: http://pserver07.dmz:19999
 - NAS:
     - HomeNAS:
         href: https://homenas.lan:5001/
@@ -181,7 +205,7 @@
             username: patrik
             password: {{ homepage_homenas_password }}
             #netmon|pacNet.moniTor.2020
-            #volume: volume_1 # optional
+            volume: volume_1 # optional
             volume: volume_2 # optional
     - PACNAS:
         href: https://pacnas.lan:5001/
@@ -200,8 +224,18 @@
             ping: 192.168.0.121
             href: http://
             #icon: pios.png
-            #siteMonitor: http://192.168.0.121:5201 p5201=iPerf3
-        
+            #siteMonitor: http://192.168.0.121:5201 # p5201=iPerf3
+        - PI 4:
+            ping: 10.10.10.26
+            href: http://pi4.lan
+            #icon: pios.png
+            #siteMonitor: http://10.10.10.26:5201 # p5201=iPerf3
+        - PI 5:
+            ping: 10.10.10.29
+            href: http://pi5.lan
+            #icon: pios.png
+            #siteMonitor: http://10.10.10.29:5201 # p5201=iPerf3
+            
 - Virtual machines:
     - vserver01:
         description: 
@@ -239,23 +273,104 @@
         widget:
             type: netdata
             url: http://vserver04.dmz:19999
+    - vserver05:
+        description: 
+        href: https://
+        icon: linux.png
+        siteMonitor: http://vserver05.dmz
+        ping: vserver05.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver05.dmz:19999
+    - vserver06:
+        description: 
+        href: https://
+        icon: linux.png
+        siteMonitor: http://vserver06.dmz
+        ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver07:
+        description: Win7-64b
+        href: https://
+        icon: windows7.png
+        siteMonitor: http://vserver06.dmz
+        ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver08:
+        description: Win7-64b
+        href: https://
+        icon: windows.png
+        # siteMonitor: http://vserver06.dmz
+        # ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver09:
+        description: Win7-32b
+        href: https://
+        icon: windows.png
+        # siteMonitor: http://vserver06.dmz
+        # ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver10:
+        description: Win10-64b
+        href: https://
+        icon: windows.png
+        # siteMonitor: http://vserver06.dmz
+        # ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver11:
+        description: 
+        href: https://
+        icon: linux.png
+        # siteMonitor: http://vserver06.dmz
+        # ping: vserver06.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver06.dmz:19999
+    - vserver12:
+        description: 
+        href: https://
+        icon: linux.png
+        #siteMonitor: https://vserver12.dmz
+        ping: vserver12.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver12.dmz:19999
+    - vserver_RZ:
+        description: RunZero vm
+        href: https://
+        icon: linux.png
+        # siteMonitor: http://vserver12.dmz
+        # ping: vserver12.dmz
+        # widget:
+            # type: netdata
+            # url: http://vserver12.dmz:19999
 
 - Monitoring:
     - UptimeKuma Overview:
-        href: http://kuma.lan/dashboard
-        description: uptimekuma on vserver
+        href: https://kuma.pacnet.be/dashboard
+        description: uptimekuma
         icon: uptime-kuma.png
         widget:
             type: uptimekuma
-            url: http://uptime.lan:3001
+            url: https://kuma.pacnet.be
             slug: overview
     - UptimeKuma infrastructure:
-        href: http://uptime.lan:3001/status/infra
+        href: https://kuma.pacnet.be/status/infra
 #        description: Infrastructure overview
 #        icon: uptime-kuma.png
         widget:
             type: uptimekuma
-            url: http://uptime.lan:3001
+            url: https://kuma.pacnet.be
             slug: infra
 
     - UptimeRobot:
@@ -275,17 +390,27 @@
         icon: openspeedtest.png
         description: on T310
 
+    - Speedtest-Tracker:
+        # https://speedtest-tracker.dev/
+        icon: speedtest-tracker.png
+        href: http://t310.dmz:8081
+        description: ISP speedtest
+        widget:
+            type: speedtest
+            url: http://t310.dmz:8081
+            fields: ["download", "upload", "ping"]
+
 - IoT and Smarthome:
     - Home Assistant:
-        href: http://ha.lan:8123
+        href: https://ha.pacnet.be
         icon: home-assistant.png
         description: homeassistant
         ping: ha.lan
-        siteMonitor: http://ha.lan:8123
+        siteMonitor: https://ha.pacnet.be
         key: "{{ homepage_ha_key }}"
         widget: #https://gethomepage.dev/widgets/services/homeassistant/
             type: homeassistant
-            url: http://ha.lan:8123
+            url: https://ha.pacnet.be
             key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzYmMwNzQ3NTIwZTk0OGJhOTljYzdkNDc0ZTk4Mzg5ZiIsImlhdCI6MTczNzUzNTM3NCwiZXhwIjoyMDUyODk1Mzc0fQ.rmoKonP2wlFq2xNi9kEKV5xGzo2EOEsIdZtm5tBHHHQ"
             # custom:
                 # - state: sensor.total_power
@@ -298,17 +423,26 @@
                   # label: wind speed
                   # value: "{attributes.wind_speed} {attributes.wind_speed_unit}"
     - Frigate:
-        href: https://frigate.lan:8971
-        description: on vserver04
+        href: https://frigate.pacnet.be
+        description: pserver2502
         icon: frigate.png
         ping: frigate.lan
-        siteMonitor: http://frigate.lan:8971
+        siteMonitor: https://frigate.pacnet.be
         widget:
         type: frigate
-        url: http://frigate.lan:8971
+        url: http://frigate.pacnet.be
         enableRecentEvents: true # Optional, defaults to false
 
 - Portainer:
+    - pserver2502:
+        href: https://pserver2502.dmz:9443/
+        icon: portainer.png
+        description: portainer-pserver2502
+        widget: 
+            type: portainer
+            url: https://pserver2502.dmz:9443
+            env: 2
+            key: ptr_WCj4YXXttOaDqK0ylOjI0juvXJBnEwDJr2Ef2qPH57M=
     - vserver04:
         href: https://vserver04.dmz:9443/
         icon: portainer.png
