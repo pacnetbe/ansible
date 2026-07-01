@@ -2,7 +2,7 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/settings/
 
-# pserver07:/data/compose/6/config/settings.yaml#
+# 20260701 - playbooks>homepage>files>config>settings.yaml
 
 providers:
   openweathermap: openweathermapapikey

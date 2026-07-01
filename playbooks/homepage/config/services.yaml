@@ -2,7 +2,7 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/services/
 
-# vserver04:/data/compose/2/config/services.yaml#
+# 20260701 - playbooks>homepage>config>services.yaml
 
   
 - Core:
