@@ -205,8 +205,9 @@
             username: patrik
             password: {{ homepage_homenas_password }}
             #netmon|pacNet.moniTor.2020
-            volume: volume_1 # optional
-            volume: volume_2 # optional
+            volumes:
+              - volume_1
+              - volume_2
     - PACNAS:
         href: https://pacnas.lan:5001/
         description: 
@@ -218,23 +219,25 @@
             url: https://pacnas.lan:5001
             username: pacnetadmin
             password: {{ homepage_pacnas_password }}
-            volume: volume_1 # optional
-    - PIs:
-        - PI 3b:
-            ping: 192.168.0.121
-            href: http://
-            #icon: pios.png
-            #siteMonitor: http://192.168.0.121:5201 # p5201=iPerf3
-        - PI 4:
-            ping: 10.10.10.26
-            href: http://pi4.lan
-            #icon: pios.png
-            #siteMonitor: http://10.10.10.26:5201 # p5201=iPerf3
-        - PI 5:
-            ping: 10.10.10.29
-            href: http://pi5.lan
-            #icon: pios.png
-            #siteMonitor: http://10.10.10.29:5201 # p5201=iPerf3
+            volume: volume_1 # optional            volumes:
+              - volume_1
+              - volume_2
+- PIs:
+    - PI 3b:
+        ping: 192.168.0.121
+        href: http://
+        #icon: pios.png
+        #siteMonitor: http://192.168.0.121:5201 # p5201=iPerf3
+    - PI 4:
+        ping: 10.10.10.26
+        href: http://pi4.lan
+        #icon: pios.png
+        #siteMonitor: http://10.10.10.26:5201 # p5201=iPerf3
+    - PI 5:
+        ping: 10.10.10.29
+        href: http://pi5.lan
+        #icon: pios.png
+        #siteMonitor: http://10.10.10.29:5201 # p5201=iPerf3
             
 - Virtual machines:
     - vserver01:
